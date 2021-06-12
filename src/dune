@@ -1,0 +1,15 @@
+(env
+ (dev
+  (flags
+   (:standard -warn-error -A))))
+
+(executable
+ (name main)
+ (libraries fmt str))
+
+(menhir
+ (modules parser)
+ (flags --explain))
+
+(ocamllex
+ (modules lexer))
