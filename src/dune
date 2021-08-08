@@ -5,11 +5,10 @@
 
 (executable
  (name main)
- (libraries fmt str))
+ (libraries fmt str yaml yaml.unix fpath containers sedlex menhirLib)
+ (preprocess
+  (pps sedlex.ppx)))
 
 (menhir
  (modules parser)
  (flags --explain))
-
-(ocamllex
- (modules lexer))

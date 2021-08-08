@@ -7,22 +7,22 @@ open AST
 %token AND "&"
 %token OR "|"
 %token LPAREN "(" RPAREN ")"
-%token COLON ":"
-%token <bool> INDENT
 %token <string> TEXT
-%token <string> COMMENT
 %token EOF
 
 
 %right OR
 %right AND
 
-%start <AST.element list> file
+%start <string AST.expression> full_expression
 
 %%
 
-let expression :=
+let atom :=
   | t=TEXT;                   { Atom t }
+
+let expression :=
+  | ~=atom;                   { atom }
   | "("; ~=expression; ")";   { expression }
   | e1=expression; "&"; e2=expression; {
         match e2 with
@@ -35,15 +35,6 @@ let expression :=
         | Or l -> Or (e1 :: l)
     }
 
-let requirement :=
-  | name=TEXT; ":"; name_comment=COMMENT?; n=INDENT;
-    requirement = expression; comments = COMMENT*; n2=INDENT;
-     { assert (n && not n2); { name; name_comment; requirement; comments } }
-
-let element :=
-  | ~=requirement;  { Req requirement }
-  | c=COMMENT;      { Com c }
-
-let file := l=element*; EOF; { l }
+let full_expression := ~=expression; EOF; { expression }
 
 %%
